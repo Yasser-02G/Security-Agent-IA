@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>SOC IA - Dashboard Furtif</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard_style.css') }}">
+</head>
+
+<body>
+    <div class="dashboard-container">
+
+        <aside class="sidebar-chat">
+            <div class="chat-header">
+                <h2>🤖 Agent de Sécurité IA</h2>
+                <span class="status-indicator online">Online</span>
+            </div>
+            <div id="chat-box" class="chat-messages">
+                <div class="bot-message">
+                    Initialisation des systèmes de défense... Je suis prêt à analyser le trafic et répondre à vos
+                    questions sur la sécurité.
+                </div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" id="user-input" placeholder="Interroger l'IA (ex: Dernières alertes ?)...">
+                <button onclick="sendMessage()">ENVOYER_</button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+
+            <section class="graph-section panel">
+                <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center;">
+                    <h3>📈 Analyse des Flux (Logs)</h3>
+                    <div class="chart-legend">
+                        <span class="legend-item"><i class="dot green"></i> Trafic normal OK</span>
+                        <span class="legend-item"><i class="dot red"></i> Critical (Attaque)</span>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="threatChart"></canvas>
+                </div>
+            </section>
+
+            <section class="admin-section">
+
+                <div class="panel half-panel">
+                    <div class="panel-header critical-header">
+                        <h3>🚫 IPs Bloquées (Action Requise)</h3>
+                    </div>
+                    <ul id="blocked-list" class="data-list">
+                        <li>Chargement...</li>
+                    </ul>
+                </div>
+
+                <div class="panel half-panel">
+                    <div class="panel-header">
+                        <h3>📨 Rapports Envoyés</h3>
+                    </div>
+                    <ul id="email-list" class="data-list email-list">
+                        <li>Aucun rapport récent.</li>
+                    </ul>
+                </div>
+
+            </section>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='dashboard_logic.js') }}"></script>
+</body>
+
+</html>

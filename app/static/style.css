@@ -1,0 +1,109 @@
+:root {
+    --bg-black: #0d0d0d;
+    --card-bg: #1a1a1a;
+    --border: #333;
+    --neon-red: #ff4d4d;
+    --neon-green: #00ff88;
+    --text: #e0e0e0;
+}
+
+body.soc-theme {
+    background: var(--bg-black);
+    color: var(--text);
+    font-family: 'Consolas', monospace;
+    margin: 0;
+    height: 100vh;
+}
+
+.dashboard-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    height: 100vh;
+}
+
+/* Tableau de Logs */
+.log-section { padding: 20px; overflow-y: auto; border-right: 1px solid var(--border); }
+
+.cyber-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--card-bg);
+}
+
+.cyber-table th {
+    background: #252525;
+    color: #888;
+    text-align: left;
+    padding: 12px;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+}
+
+.cyber-table td {
+    padding: 12px;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.85rem;
+}
+
+.status-blocked { color: var(--neon-red); font-weight: bold; }
+.status-ok { color: var(--neon-green); }
+
+/* Chat Style Image 3 */
+.chat-section { display: flex; flex-direction: column; background: #141414; }
+
+.chat-header {
+    padding: 20px;
+    background: #1a1a1a;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.chat-messages {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.message { display: flex; gap: 10px; max-width: 85%; }
+.message.user { align-self: flex-end; flex-direction: row-reverse; }
+
+.avatar {
+    width: 35px;
+    height: 35px;
+    background: #333;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+}
+
+.bubble {
+    background: #252525;
+    padding: 12px;
+    border-radius: 10px;
+    line-height: 1.4;
+}
+
+.message.user .bubble { background: #004d40; border: 1px solid var(--neon-green); }
+
+.chat-input-area {
+    padding: 20px;
+    display: flex;
+    gap: 10px;
+    border-top: 1px solid var(--border);
+}
+
+#user-input {
+    flex: 1;
+    background: #000;
+    border: 1px solid var(--border);
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+}

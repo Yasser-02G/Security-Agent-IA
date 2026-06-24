@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureBank - Votre Espace Personnel</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='bank_style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">SECURE<span>BANK</span></div>
+        <div class="nav-links">
+            <a href="#">Mon Compte</a>
+            <a href="#">Virements</a>
+            <a href="/admin" class="admin-link">🛡️ Admin Agent IA</a>
+            <a href="#" class="logout">Déconnexion</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="account-card">
+            <h3>Solde Disponible</h3>
+            <div class="balance">14 250,00 €</div>
+            <p>Compte Courant **** 4290</p>
+        </div>
+
+        <div class="main-content">
+            <div class="card transfer-form">
+                <h3>Effectuer un virement</h3>
+                <form action="/chat" method="POST" id="transferForm">
+                    <label>IBAN Bénéficiaire</label>
+                    <input type="text" name="iban" placeholder="FR76 3000..." required>
+                    
+                    <label>Montant (€)</label>
+                    <input type="number" name="amount" placeholder="0.00" required>
+                    
+                    <label>Motif (Optionnel)</label>
+                    <input type="text" name="message" id="motif" placeholder="Ex: Loyer, Cadeau...">
+                    
+                    <button type="submit">Confirmer le virement</button>
+                </form>
+                <p class="note">Note : Chaque transaction est analysée par notre IA de sécurité.</p>
+            </div>
+
+            <div class="card history">
+                <h3>Dernières Transactions</h3>
+                <ul>
+                    <li><span>18 Fév</span> <span>Supermarché</span> <span class="minus">-45.20 €</span></li>
+                    <li><span>17 Fév</span> <span>Virement Reçu</span> <span class="plus">+1 200.00 €</span></li>
+                    <li><span>15 Fév</span> <span>Abonnement Internet</span> <span class="minus">-29.99 €</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        &copy; 2026 SecureBank - Système protégé par Shield-GPT
+    </footer>
+
+    <script>
+        // Script pour simuler une action lors du virement
+        document.getElementById('transferForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const motif = document.getElementById('motif').value;
+            
+            // On envoie le motif au chatbot/middleware pour analyse
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({message: motif})
+            });
+            
+            if (response.status === 403) {
+                alert("🚨 TRANSACTION BLOQUÉE : L'agent IA a détecté une menace dans votre saisie !");
+            } else {
+                alert("✅ Virement effectué avec succès (après analyse IA).");
+            }
+        };
+    </script>
+</body>
+</html>

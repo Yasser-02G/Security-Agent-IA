@@ -1,0 +1,243 @@
+:root {
+    --bg-dark: #050a10; /* Fond très sombre */
+    --bg-panel: #0b121d; /* Fond des panneaux */
+    --text-primary: #e1e8f0;
+    --text-secondary: #8b9db3;
+    --accent-blue: #3a86ff;
+    --accent-green: #00ff9d;
+    --accent-red: #ff0055;
+    --grid-color: rgba(58, 134, 255, 0.07);
+    --border-glow: 1px solid rgba(58, 134, 255, 0.2);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    height: 100vh;
+    overflow: hidden;
+    /* Effet de grille style "Memex" */
+    background-image: 
+        linear-gradient(var(--grid-color) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+    background-size: 30px 30px;
+}
+
+/* Layout principal en 2 colonnes */
+.dashboard-container {
+    display: flex;
+    height: 100vh;
+    padding: 20px;
+    gap: 20px;
+}
+
+/* --- Style Global des Panneaux --- */
+.panel {
+    background: var(--bg-panel);
+    border: var(--border-glow);
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.panel-header {
+    padding: 12px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.panel-header h3 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--accent-blue);
+}
+
+.critical-header h3 { color: var(--accent-red); }
+
+/* --- Colonne Gauche : Chatbot --- */
+.sidebar-chat {
+    width: 350px;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-panel);
+    border: var(--border-glow);  
+    border-radius: 8px;          
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+
+.chat-header {
+    padding: 15px;
+    border-bottom: var(--border-glow);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.status-indicator { font-size: 0.8rem; }
+.status-indicator.online { color: var(--accent-green); }
+
+.chat-messages {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    background: rgba(0,0,0,0.1);
+}
+
+.bot-message, .user-message {
+    padding: 10px 15px;
+    border-radius: 8px;
+    max-width: 85%;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.bot-message {
+    background: rgba(58, 134, 255, 0.15);
+    border-left: 3px solid var(--accent-blue);
+    align-self: flex-start;
+}
+
+.user-message {
+    background: rgba(255, 255, 255, 0.05);
+    border-right: 3px solid var(--text-secondary);
+    align-self: flex-end;
+    text-align: right;
+}
+
+.chat-input-area {
+    padding: 15px;
+    display: flex;
+    gap: 10px;
+    border-top: var(--border-glow);
+}
+
+.chat-input-area input {
+    flex: 1;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    border-radius: 4px;
+    font-family: monospace;
+}
+
+.chat-input-area button {
+    padding: 0 20px;
+    background: var(--accent-blue);
+    border: none;
+    color: white;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.chat-input-area button:hover { background: #2a6edb; box-shadow: 0 0 10px var(--accent-blue); }
+
+/* --- Colonne Droite : Contenu --- */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Section Graphique */
+.graph-section {
+    flex: 3; /* Prend plus de place */
+    min-height: 300px;
+}
+
+.chart-container {
+    flex: 1;
+    padding: 15px;
+    position: relative;
+}
+
+/* Section Admin (Bas) */
+.admin-section {
+    flex: 2;
+    display: flex;
+    gap: 20px;
+}
+
+.half-panel { flex: 1; }
+
+/* Listes de données (IPs et Emails) */
+.data-list {
+    list-style: none;
+    padding: 10px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.data-list li {
+    padding: 8px 12px;
+    margin-bottom: 5px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: monospace;
+    font-size: 0.9rem;
+}
+
+/* Liste des IPs bloquées */
+#blocked-list li {
+    border-left: 3px solid var(--accent-red);
+    color: var(--accent-red);
+}
+
+.unblock-btn {
+    padding: 4px 10px;
+    background: rgba(255, 0, 85, 0.2);
+    border: 1px solid var(--accent-red);
+    color: var(--accent-red);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+.unblock-btn:hover { background: var(--accent-red); color: white; }
+
+/* Liste des Emails */
+.email-list li {
+    border-left: 3px solid var(--text-secondary);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+}
+.email-date { font-size: 0.75rem; color: var(--text-secondary); }
+.email-subject { color: var(--text-primary); }
+
+.chart-legend {
+    display: flex;
+    gap: 20px;
+    font-size: 0.8rem;
+    font-family: monospace;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.dot.green { background-color: var(--accent-green); box-shadow: 0 0 5px var(--accent-green); }
+.dot.red { background-color: var(--accent-red); box-shadow: 0 0 5px var(--accent-red); }
