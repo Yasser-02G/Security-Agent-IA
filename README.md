@@ -231,7 +231,7 @@ pip install -r requirements.txt
 Copy the example file and fill in your own credentials:
 
 ```bash
-cp .env.example .env
+.env
 ```
 
 | Variable | Description |
