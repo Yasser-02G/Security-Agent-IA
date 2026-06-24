@@ -1,62 +1,62 @@
-# 🛡️ Security Agent IA — Détection d'intrusion en temps réel pour application bancaire
+# 🛡️ AI Security Agent — Real-Time Intrusion Detection for a Banking Application
 
-> Un agent de cybersécurité autonome qui combine **Machine Learning** (Isolation Forest) et un **LLM (Google Gemini)** pour analyser, juger et bloquer en temps réel les requêtes malveillantes adressées à une application web — illustré ici sur une simulation de plateforme bancaire (**SecureBank**).
+> An autonomous cybersecurity agent that combines **Machine Learning** (Isolation Forest) with an **LLM (Google Gemini)** to analyze, judge, and block malicious requests to a web application in real time — demonstrated here on a simulated online banking platform (**SecureBank**).
 
 ---
 
-## 📌 Sommaire
+## 📌 Table of Contents
 
-- [Contexte et objectif](#-contexte-et-objectif)
-- [Démonstration](#-démonstration)
-- [Architecture du projet](#-architecture-du-projet)
-- [Comment ça marche](#-comment-ça-marche)
+- [Context & Objective](#-context--objective)
+- [Demo](#-demo)
+- [Project Architecture](#-project-architecture)
+- [How It Works](#-how-it-works)
 - [Tools & Technologies](#-tools--technologies)
 - [Key Concepts Covered](#-key-concepts-covered)
 - [Installation](#-installation)
 - [Configuration](#-configuration)
-- [Lancement](#-lancement)
-- [Tester une attaque](#-tester-une-attaque)
-- [Dashboard de l'agent IA](#-dashboard-de-lagent-ia)
-- [Limites connues](#-limites-connues)
-- [Pistes d'amélioration](#-pistes-damélioration)
-- [Avertissement](#-avertissement)
+- [Running the App](#-running-the-app)
+- [Testing an Attack](#-testing-an-attack)
+- [AI Agent Dashboard](#-ai-agent-dashboard)
+- [Known Limitations](#-known-limitations)
+- [Improvement Ideas](#-improvement-ideas)
+- [Disclaimer](#-disclaimer)
 - [Author](#-author)
-- [Licence](#-licence)
+- [License](#-license)
 
 ---
 
-## 🎯 Contexte et objectif
+## 🎯 Context & Objective
 
-Ce projet est un **prototype pédagogique de SOC (Security Operations Center) assisté par IA**. L'idée est de répondre à une question simple : *peut-on déléguer la détection d'intrusion à une IA générative, en complément d'un modèle de Machine Learning classique ?*
+This project is an **educational prototype of an AI-assisted SOC (Security Operations Center)**. The idea is to answer a simple question: *can intrusion detection be delegated to a generative AI, working alongside a classic Machine Learning model?*
 
-Le scénario simulé est celui d'une banque en ligne (**SecureBank**) qui expose un formulaire de virement et un chatbot client. Chaque requête entrante traverse un **middleware de sécurité** avant d'atteindre l'application :
+The simulated scenario is an online bank (**SecureBank**) that exposes a money transfer form and a customer chatbot. Every incoming request passes through a **security middleware** before reaching the application:
 
-1. Un modèle ML léger (**Isolation Forest**) fait un premier tri rapide basé sur des caractéristiques de la requête (longueur, présence de caractères suspects).
-2. Si la requête est jugée anormale, elle est transmise à un **agent Gemini** qui l'analyse en langage naturel et rend un verdict motivé : `BLOCK` ou `ALLOW`.
-3. En cas de blocage, l'IP est bannie, l'événement est journalisé, et une **alerte email** est envoyée automatiquement à l'administrateur.
-4. Un **dashboard temps réel** permet de visualiser les flux, les IPs bloquées, l'historique des alertes, et de dialoguer avec un chatbot qui analyse les logs sur demande.
+1. A lightweight ML model (**Isolation Forest**) performs a quick first pass based on request features (length, presence of suspicious characters).
+2. If a request is flagged as abnormal, it is forwarded to a **Gemini agent**, which analyzes it in natural language and returns a reasoned verdict: `BLOCK` or `ALLOW`.
+3. If blocked, the IP is banned, the event is logged, and an **email alert** is automatically sent to the administrator.
+4. A **real-time dashboard** lets you visualize traffic, blocked IPs, alert history, and chat with a bot that analyzes the logs on demand.
 
 ---
 
-## 🖥️ Démonstration
+## 🖥️ Demo
 
-### Scénario complet : de l'attaque au blocage automatique
+### Full scenario: from attack to automatic block
 
-**1. L'application bancaire en fonctionnement**
+**1. The banking application in action**
 
-L'interface client (`bank_index.html`) simule un compte courant avec formulaire de virement. Chaque soumission passe par le middleware de sécurité, de façon transparente pour l'utilisateur.
+The client interface (`bank_index.html`) simulates a checking account with a transfer form. Every submission passes through the security middleware, transparently to the end user.
 
-![Interface SecureBank](Screenshots/Capture%20d%E2%80%99%C3%A9cran%20%28101%29.png)
+![SecureBank Interface](Screenshots/Capture%20d%E2%80%99%C3%A9cran%20%28101%29.png)
 
-**2. Lancement du serveur Flask**
+**2. Starting the Flask server**
 
-L'agent est démarré en local (mode debug) et écoute sur le réseau pour pouvoir être ciblé par une machine d'attaque (ici une VM Kali Linux sur le même réseau).
+The agent is started locally (debug mode) and listens on the network so it can be targeted by an attacking machine (here, a Kali Linux VM on the same network).
 
-![Lancement du serveur Flask](Screenshots/Capture%20d%E2%80%99%C3%A9cran%20%28100%29.png)
+![Starting the Flask server](Screenshots/Capture%20d%E2%80%99%C3%A9cran%20%28100%29.png)
 
-**3. Simulation d'une attaque depuis Kali Linux**
+**3. Simulating an attack from Kali Linux**
 
-Une requête `curl` injecte une charge malveillante combinant **injection SQL** et **XSS** dans le endpoint `/chat` :
+A `curl` request injects a malicious payload combining **SQL injection** and **XSS** into the `/chat` endpoint:
 
 ```bash
 curl -X POST http://192.168.56.1:5000/chat \
@@ -64,54 +64,54 @@ curl -X POST http://192.168.56.1:5000/chat \
      -d '{"message": "SELECT * FROM users; DROP TABLE accounts; <script>alert(1)</script>"}'
 ```
 
-![Attaque depuis Kali Linux](Screenshots/Capture%20d%E2%80%99%C3%A9cran%20%28104%29.png)
+![Attack from Kali Linux](Screenshots/Capture%20d%E2%80%99%C3%A9cran%20%28104%29.png)
 
-**4. Blocage immédiat — page d'erreur 403**
+**4. Immediate block — 403 error page**
 
-Le middleware intercepte la requête, le modèle ML détecte l'anomalie, l'agent Gemini confirme le verdict `BLOCK`, et l'IP est immédiatement bannie. Toute requête suivante de cette IP reçoit une page d'erreur 403, y compris pour les ressources statiques (ici une erreur de template attendue en environnement de démo).
+The middleware intercepts the request, the ML model flags the anomaly, the Gemini agent confirms the `BLOCK` verdict, and the IP is immediately banned. Any further request from this IP receives a 403 error page, including for static resources (here, a template error expected in this demo environment).
 
-![Page d'erreur après blocage](Screenshots/Capture%20d%E2%80%99%C3%A9cran%20%28105%29.png)
+![Error page after blocking](Screenshots/Capture%20d%E2%80%99%C3%A9cran%20%28105%29.png)
 
-**5. Dashboard — visualisation de l'attaque en temps réel**
+**5. Dashboard — real-time attack visualization**
 
-Le dashboard administrateur affiche le graphique des flux : le trafic normal apparaît en vert, le pic critique de l'attaque détectée apparaît en rouge. L'IP `192.168.56.102` est listée dans les IPs bloquées, et un rapport a été automatiquement envoyé par email.
+The administrator dashboard displays the traffic chart: normal traffic appears in green, while the critical attack spike appears in red. The IP `192.168.56.102` is listed under blocked IPs, and a report has been automatically sent by email.
 
-![Dashboard temps réel](Screenshots/Capture%20d%E2%80%99%C3%A9cran%20%28106%29.png)
+![Real-time dashboard](Screenshots/Capture%20d%E2%80%99%C3%A9cran%20%28106%29.png)
 
-**6. Chatbot d'analyse des logs**
+**6. Log analysis chatbot**
 
-L'administrateur peut interroger l'agent IA en langage naturel pour obtenir une synthèse des événements de sécurité de la journée, avec horodatage, IP source et raison du blocage pour chaque alerte.
+The administrator can query the AI agent in natural language to get a summary of the day's security events, with timestamp, source IP, and the reason for each block.
 
-![Chatbot d'analyse de sécurité](Screenshots/Capture%20d%E2%80%99%C3%A9cran%20%28107%29.png)
+![Security analysis chatbot](Screenshots/Capture%20d%E2%80%99%C3%A9cran%20%28107%29.png)
 
-**7. Alerte email reçue**
+**7. Email alert received**
 
-Chaque blocage déclenche l'envoi automatique d'un email d'alerte SOC contenant la date, l'IP bloquée, le type d'attaque et le modèle IA ayant rendu le verdict.
+Every block automatically triggers a SOC alert email containing the date, the blocked IP, the attack type, and the AI model that issued the verdict.
 
-![Email d'alerte SOC](Screenshots/Capture%20d%E2%80%99%C3%A9cran%20%28108%29.png)
+![SOC alert email](Screenshots/Capture%20d%E2%80%99%C3%A9cran%20%28108%29.png)
 
 ---
 
-## 🏗️ Architecture du projet
+## 🏗️ Project Architecture
 
 ```
 security_agent/
 │   .env
 │   requirements.txt
-│   test_api.py           # Script de diagnostic : liste les modèles Gemini disponibles pour la clé API
+│   test_api.py           # Diagnostic script: lists the Gemini models available for the API key
 │
 ├───app/
-│   │   main.py           # Point d'entrée Flask : middleware de sécurité, routes, dashboard
-│   │   config.py         # Chargement centralisé de la configuration (.env)
+│   │   main.py           # Flask entry point: security middleware, routes, dashboard
+│   │   config.py         # Centralized configuration loading (.env)
 │   │   __init__.py
 │   │
 │   ├───services/
-│   │       ai_handler.py     # Agent Gemini : chatbot de logs + verdict BLOCK/ALLOW motivé
-│   │       ml_engine.py      # Modèle Isolation Forest pour la détection d'anomalies
-│   │       mail_sender.py    # Envoi des alertes email (SMTP SSL Gmail)
+│   │       ai_handler.py     # Gemini agent: log chatbot + reasoned BLOCK/ALLOW verdict
+│   │       ml_engine.py      # Isolation Forest model for anomaly detection
+│   │       mail_sender.py    # Email alerts (SMTP SSL)
 │   │       __init__.py
 │   │
-│   ├───static/           # CSS / JS du site bancaire et du dashboard
+│   ├───static/           # CSS / JS for the banking site and the dashboard
 │   │       bank_style.css
 │   │       dashboard_logic.js
 │   │       dashboard_style.css
@@ -119,96 +119,96 @@ security_agent/
 │   │       style.css
 │   │
 │   └───templates/
-│           bank_index.html   # Interface client SecureBank
-│           dashboard.html    # Dashboard administrateur / SOC
+│           bank_index.html   # SecureBank client interface
+│           dashboard.html    # Admin / SOC dashboard
 │
 ├───logs/
-│       access.log        # Journal des requêtes : horodatage, IP, statut, action, raison, score
+│       access.log        # Request log: timestamp, IP, status, action, reason, score
 │
-└───Screenshots/          # Captures d'écran de démonstration (voir section ci-dessus)
+└───Screenshots/          # Demo screenshots (see Demo section above)
 ```
 
 ---
 
-## ⚙️ Comment ça marche
+## ⚙️ How It Works
 
-### 1. Le middleware de sécurité (`app/main.py`)
+### 1. The security middleware (`app/main.py`)
 
-Chaque requête HTTP entrante (hors fichiers statiques et routes d'administration) passe par `security_middleware()` avant d'atteindre la logique applicative :
+Every incoming HTTP request (except static files and admin routes) passes through `security_middleware()` before reaching the application logic:
 
-- Vérifie si l'IP émettrice est déjà dans la liste noire (`blocked_ips`) → renvoie directement une erreur 403.
-- Extrait des **features** simples de la requête : longueur totale, nombre de quotes (`'`), nombre de chevrons (`<`).
-- Calcule un **score de menace préliminaire** (10 = normal, 50 = suspect).
+- Checks whether the source IP is already on the blocklist (`blocked_ips`) → returns a 403 error directly.
+- Extracts simple **features** from the request: total length, number of quotes (`'`), number of angle brackets (`<`).
+- Computes a **preliminary threat score** (10 = normal, 50 = suspicious).
 
-### 2. Premier filtre : le modèle ML (`app/services/ml_engine.py`)
+### 2. First filter: the ML model (`app/services/ml_engine.py`)
 
-Un `IsolationForest` (scikit-learn) entraîné sur un jeu de données "normal" sert de premier détecteur d'anomalies. Toute présence de caractères spéciaux (`'` ou `<`) force immédiatement le statut anomalie, en complément du jugement du modèle.
+An `IsolationForest` (scikit-learn) trained on a "normal" dataset acts as a first anomaly detector. Any presence of special characters (`'` or `<`) immediately forces the anomaly status, in addition to the model's own judgment.
 
-### 3. Second filtre : le verdict de l'agent Gemini (`app/services/ai_handler.py`)
+### 3. Second filter: the Gemini agent's verdict (`app/services/ai_handler.py`)
 
-Si une anomalie est détectée, la requête brute est transmise au modèle **Gemini** (`gemini-flash-latest`) avec un prompt lui demandant de rendre un verdict binaire **BLOCK / ALLOW** et une justification.
+If an anomaly is detected, the raw request is sent to the **Gemini** model (`gemini-flash-latest`) with a prompt asking it to return a binary **BLOCK / ALLOW** verdict along with a justification.
 
-> 🔁 **Mode de secours** : si l'API Gemini est indisponible (quota, erreur réseau...), une détection par liste de patterns (`'`, `<`, `>`, `SELECT`, `SCRIPT`) prend automatiquement le relais pour ne jamais laisser une requête suspecte sans réponse.
+> 🔁 **Fallback mode**: if the Gemini API is unavailable (quota, network error...), a pattern-based detection (`'`, `<`, `>`, `SELECT`, `SCRIPT`) automatically takes over, so a suspicious request is never left unhandled.
 
-### 4. Action et notification
+### 4. Action & notification
 
-- Si le verdict est `BLOCK` : l'IP est ajoutée à la liste noire, l'événement est journalisé avec un score critique (95), et une **alerte email** est envoyée via `smtplib` (SMTP SSL, Gmail).
-- Si `ALLOW` : la requête est journalisée avec un score modéré (60) et autorisée à continuer.
-- Tout trafic normal (sans anomalie) est journalisé avec un score faible (10).
+- If the verdict is `BLOCK`: the IP is added to the blocklist, the event is logged with a critical score (95), and an **email alert** is sent via `smtplib` (SMTP SSL, Gmail).
+- If `ALLOW`: the request is logged with a moderate score (60) and allowed to continue.
+- All normal traffic (no anomaly) is logged with a low score (10).
 
-### 5. Journalisation (`logs/access.log`)
+### 5. Logging (`logs/access.log`)
 
-Chaque ligne de log suit le format :
+Each log line follows this format:
 
 ```
-timestamp|ip_source|chemin|statut|action|raison|score
+timestamp|source_ip|path|status|action|reason|score
 ```
 
-Ce journal alimente à la fois l'API `/api/stats` (graphique du dashboard) et le chatbot d'analyse (`/chat`).
+This log feeds both the `/api/stats` endpoint (dashboard chart) and the analysis chatbot (`/chat`).
 
-### 6. Dashboard administrateur (`/admin`)
+### 6. Admin dashboard (`/admin`)
 
-Une interface temps réel (rafraîchie périodiquement) affiche :
-- Un **graphique des flux** (trafic normal en vert, attaques critiques en rouge).
-- La liste des **IPs bloquées**, avec un bouton de déblocage manuel.
-- L'historique des **emails d'alerte envoyés**.
-- Un **chatbot** permettant d'interroger l'agent IA en langage naturel sur l'état de la sécurité (ex. *"est-ce que vous avez détecté une attaque aujourd'hui ?"*).
+A real-time interface (periodically refreshed) displays:
+- A **traffic chart** (normal traffic in green, critical attacks in red).
+- The list of **blocked IPs**, with a manual unblock button.
+- The history of **email alerts sent**.
+- A **chatbot** to query the AI agent in natural language about the current security status (e.g. *"did you detect any attack today?"*).
 
 ---
 
 ## 🛠️ Tools & Technologies
 
-| Catégorie | Outil / Technologie | Rôle dans le projet |
+| Category | Tool / Technology | Role in the Project |
 |---|---|---|
-| Langage | **Python 3** | Langage principal du backend |
-| Framework web | **Flask** | Serveur applicatif, routes, middleware de sécurité |
-| Machine Learning | **scikit-learn** (`IsolationForest`) | Détection d'anomalies sur les requêtes entrantes |
-| Calcul numérique | **NumPy / Pandas** | Manipulation des features et des données de logs |
-| IA générative | **Google Gemini** (`google-genai`) | Verdict BLOCK/ALLOW motivé + chatbot d'analyse des logs |
-| Visualisation | **Plotly** | Graphique temps réel des flux dans le dashboard |
-| Frontend | **HTML / CSS / JavaScript** (vanilla) | Interface bancaire (SecureBank) et dashboard SOC |
-| Email | **smtplib** (SMTP SSL) | Envoi automatique des alertes d'intrusion via Gmail |
-| Configuration | **python-dotenv** | Chargement sécurisé des variables d'environnement (`.env`) |
-| Tests / Diagnostic | `test_api.py` | Vérification de la clé API et des modèles Gemini disponibles |
-| Environnement d'attaque | **Kali Linux** (VirtualBox) | Machine utilisée pour simuler les requêtes malveillantes (`curl`) |
-| Versioning | **Git / GitHub** | Gestion de version et hébergement du dépôt |
+| Language | **Python 3** | Main backend language |
+| Web framework | **Flask** | Application server, routes, security middleware |
+| Machine Learning | **scikit-learn** (`IsolationForest`) | Anomaly detection on incoming requests |
+| Numerical computing | **NumPy / Pandas** | Feature handling and log data manipulation |
+| Generative AI | **Google Gemini** (`google-genai`) | Reasoned BLOCK/ALLOW verdict + log analysis chatbot |
+| Visualization | **Plotly** | Real-time traffic chart in the dashboard |
+| Frontend | **HTML / CSS / JavaScript** (vanilla) | Banking interface (SecureBank) and SOC dashboard |
+| Email | **smtplib** (SMTP SSL) | Automatic intrusion alert emails via Gmail |
+| Configuration | **python-dotenv** | Secure loading of environment variables (`.env`) |
+| Testing / Diagnostics | `test_api.py` | Verifies the API key and lists available Gemini models |
+| Attack environment | **Kali Linux** (VirtualBox) | VM used to simulate malicious requests (`curl`) |
+| Versioning | **Git / GitHub** | Version control and repository hosting |
 
 ---
 
 ## 📌 Key Concepts Covered
 
-Ce projet met en pratique plusieurs concepts clés à l'intersection de la **cybersécurité**, du **Machine Learning** et de l'**IA générative** :
+This project puts into practice several key concepts at the intersection of **cybersecurity**, **Machine Learning**, and **generative AI**:
 
-- **Sécurité applicative web** — middleware d'interception, gestion des requêtes entrantes, bannissement d'IP, réponses HTTP 403.
-- **Détection d'intrusion (IDS)** — identification de motifs d'attaque courants : injection SQL, Cross-Site Scripting (XSS).
-- **Détection d'anomalies par Machine Learning** — utilisation d'un modèle non supervisé (`IsolationForest`) pour repérer des comportements déviants sans étiquetage préalable.
-- **IA générative comme moteur de décision (LLM-as-a-judge)** — un modèle de langage rend un verdict de sécurité motivé à partir d'une donnée brute, illustrant un pattern *"LLM-as-a-judge"*.
-- **Stratégie de repli (fallback)** — bascule automatique vers une détection par patterns lorsque l'API IA est indisponible, pour garantir la continuité de la protection.
-- **Journalisation et observabilité** — structuration des logs pour permettre l'analyse a posteriori et l'alimentation d'un dashboard temps réel.
-- **Automatisation des alertes** — notification email déclenchée automatiquement par un événement de sécurité.
-- **Visualisation de données de sécurité** — représentation graphique du niveau de menace dans le temps.
-- **Gestion sécurisée des secrets** — séparation configuration / code via variables d'environnement (`.env`), exclusion via `.gitignore`.
-- **Simulation d'attaque en environnement contrôlé** — usage d'une machine virtuelle Kali Linux pour reproduire un scénario d'intrusion réaliste sans risque.
+- **Web application security** — interception middleware, incoming request handling, IP banning, HTTP 403 responses.
+- **Intrusion Detection (IDS)** — identifying common attack patterns: SQL injection, Cross-Site Scripting (XSS).
+- **ML-based anomaly detection** — using an unsupervised model (`IsolationForest`) to spot deviant behavior without prior labeling.
+- **Generative AI as a decision engine (LLM-as-a-judge)** — a language model issues a reasoned security verdict from raw data, illustrating the *"LLM-as-a-judge"* pattern.
+- **Fallback strategy** — automatic switch to pattern-based detection when the AI API is unavailable, ensuring continuous protection.
+- **Logging & observability** — structuring logs to enable retrospective analysis and feed a real-time dashboard.
+- **Alert automation** — email notifications automatically triggered by a security event.
+- **Security data visualization** — graphical representation of the threat level over time.
+- **Secure secrets management** — separating configuration from code via environment variables (`.env`), excluded via `.gitignore`.
+- **Controlled-environment attack simulation** — using a Kali Linux virtual machine to reproduce a realistic intrusion scenario without risk.
 
 ---
 
@@ -219,7 +219,7 @@ git clone https://github.com/Yasser-02G/security_agent.git
 cd security_agent
 
 python -m venv venv
-source venv/bin/activate      # Windows : venv\Scripts\activate
+source venv/bin/activate      # Windows: venv\Scripts\activate
 
 pip install -r requirements.txt
 ```
@@ -228,7 +228,7 @@ pip install -r requirements.txt
 
 ## 🔑 Configuration
 
-Copie le fichier d'exemple et renseigne tes propres identifiants :
+Copy the example file and fill in your own credentials:
 
 ```bash
 cp .env.example .env
@@ -236,12 +236,12 @@ cp .env.example .env
 
 | Variable | Description |
 |---|---|
-| `GEMINI_API_KEY` | Clé API Google Gemini ([obtenir une clé sur AI Studio](https://aistudio.google.com/apikey)) |
-| `GMAIL_USER` | Adresse Gmail utilisée comme expéditeur des alertes |
-| `GMAIL_APP_PASSWORD` | [Mot de passe d'application](https://support.google.com/accounts/answer/185833) Gmail (16 caractères, **pas** ton mot de passe principal) |
-| `RECIPIENT_EMAIL` | Adresse email destinataire des alertes de sécurité |
+| `GEMINI_API_KEY` | Google Gemini API key ([get one on AI Studio](https://aistudio.google.com/apikey)) |
+| `GMAIL_USER` | Gmail address used as the alert sender |
+| `GMAIL_APP_PASSWORD` | Gmail [app password](https://support.google.com/accounts/answer/185833) (16 characters, **not** your main password) |
+| `RECIPIENT_EMAIL` | Email address that receives security alerts |
 
-Pour vérifier que ta clé Gemini est valide et lister les modèles disponibles :
+To verify that your Gemini key is valid and list the available models:
 
 ```bash
 python test_api.py
@@ -249,7 +249,7 @@ python test_api.py
 
 ---
 
-## 🚀 Lancement
+## 🚀 Running the App
 
 ```bash
 python -m app.main
@@ -257,65 +257,65 @@ python -m app.main
 
 | Interface | URL |
 |---|---|
-| Site bancaire (client) | http://localhost:5000/ |
-| Dashboard administrateur | http://localhost:5000/admin |
+| Banking site (client) | http://localhost:5000/ |
+| Admin dashboard | http://localhost:5000/admin |
 
 ---
 
-## 🧪 Tester une attaque
+## 🧪 Testing an Attack
 
 ```bash
-curl -X POST http://<IP_DU_SERVEUR>:5000/chat \
+curl -X POST http://<SERVER_IP>:5000/chat \
      -H "Content-Type: application/json" \
      -d '{"message": "SELECT * FROM users; DROP TABLE accounts; <script>alert(1)</script>"}'
 ```
 
-Déroulement attendu :
-1. Le middleware détecte l'anomalie (présence de `'` et `<`).
-2. L'agent Gemini (ou le mode de secours) rend un verdict `BLOCK`.
-3. L'IP source est bannie immédiatement.
-4. L'événement est journalisé dans `logs/access.log`.
-5. Une alerte email est envoyée au destinataire configuré.
-6. Le dashboard affiche le pic d'attaque en temps réel.
+Expected flow:
+1. The middleware detects the anomaly (presence of `'` and `<`).
+2. The Gemini agent (or fallback mode) returns a `BLOCK` verdict.
+3. The source IP is immediately banned.
+4. The event is logged in `logs/access.log`.
+5. An email alert is sent to the configured recipient.
+6. The dashboard displays the attack spike in real time.
 
 ---
 
-## 📊 Dashboard de l'agent IA
+## 📊 AI Agent Dashboard
 
-Accessible sur `/admin`, il expose trois zones principales :
+Available at `/admin`, it exposes three main areas:
 
-- **Analyse des flux (logs)** — graphique temps réel basé sur `/api/stats`.
-- **IPs bloquées** — liste avec action de déblocage manuel (`/api/unblock`).
-- **Rapports envoyés** — historique des alertes email.
-- **Chat de l'agent** — interface conversationnelle (`/chat`) pour interroger les logs récents en langage naturel.
-
----
-
-## ⚠️ Limites connues
-
-- Le serveur Flask est lancé en **mode debug** — à ne jamais exposer ainsi en production.
-- Les **features ML** sont volontairement simples (longueur, occurrences de caractères) à des fins pédagogiques ; un détecteur réel utiliserait des features bien plus riches (entropie, n-grams, géolocalisation IP, fréquence des requêtes...).
-- Le **verdict Gemini** peut produire des faux positifs/négatifs et dépend de la disponibilité de l'API.
-- Le **stockage est en mémoire** (`blocked_ips`, `sent_emails_log`) : tout est perdu au redémarrage du serveur.
-- Pas d'authentification sur la route `/admin` dans cette version de démonstration.
-
-## 🔭 Pistes d'amélioration
-
-- Authentification et autorisation sur le dashboard.
-- Persistance des IPs bloquées et des logs (base de données plutôt que fichier plat).
-- Limitation de débit (rate limiting) en complément de la détection comportementale.
-- Tableau de bord avec filtres par période, export des rapports, et alerting multi-canal (Slack, Telegram...).
-- Tests automatisés (unitaires sur `ml_engine.py`, `ai_handler.py`, et tests d'intégration sur le middleware).
+- **Traffic analysis (logs)** — real-time chart based on `/api/stats`.
+- **Blocked IPs** — list with manual unblock action (`/api/unblock`).
+- **Sent reports** — history of email alerts.
+- **Agent chat** — conversational interface (`/chat`) to query recent logs in natural language.
 
 ---
 
-## ⚠️ Avertissement
+## ⚠️ Known Limitations
 
-Ce projet est un **prototype de démonstration / pédagogique**, réalisé dans un cadre d'apprentissage en cybersécurité et IA appliquée. Il n'est **pas conçu pour un usage en production** :
+- The Flask server runs in **debug mode** — never expose it this way in production.
+- The **ML features** are intentionally simple (length, character counts) for educational purposes; a real-world detector would use much richer features (entropy, n-grams, IP geolocation, request frequency...).
+- The **Gemini verdict** can produce false positives/negatives and depends on API availability.
+- **Storage is in-memory** (`blocked_ips`, `sent_emails_log`): everything is lost on server restart.
+- No authentication on the `/admin` route in this demo version.
 
-- Le serveur de développement Flask (`debug=True`) ne doit jamais être exposé publiquement.
-- La détection par IA ne remplace pas un WAF (Web Application Firewall) ou un SOC professionnel.
-- Toute clé API ou identifiant ayant pu être exposé pendant les phases de test doit être révoqué avant toute mise en ligne du dépôt.
+## 🔭 Improvement Ideas
+
+- Authentication and authorization on the dashboard.
+- Persistence of blocked IPs and logs (database instead of a flat file).
+- Rate limiting in addition to behavioral detection.
+- Dashboard with date-range filters, report export, and multi-channel alerting (Slack, Telegram...).
+- Automated tests (unit tests for `ml_engine.py`, `ai_handler.py`, and integration tests for the middleware).
+
+---
+
+## ⚠️ Disclaimer
+
+This project is an **educational demo prototype**, built as a learning exercise in applied cybersecurity and AI. It is **not intended for production use**:
+
+- The Flask development server (`debug=True`) should never be exposed publicly.
+- AI-based detection does not replace a WAF (Web Application Firewall) or a professional SOC.
+- Any API key or credential that may have been exposed during testing should be revoked before publishing the repository.
 
 ---
 
@@ -323,12 +323,12 @@ Ce projet est un **prototype de démonstration / pédagogique**, réalisé dans 
 
 **Yasser**
 
-- GitHub : [@Yasser-02G](https://github.com/Yasser-02G)
+- GitHub: [@Yasser-02G](https://github.com/Yasser-02G)
 
-N'hésite pas à ouvrir une *issue* ou une *pull request* si tu as des suggestions d'amélioration sur ce projet.
+Feel free to open an *issue* or a *pull request* if you have suggestions to improve this project.
 
 ---
 
-## 📄 Licence
+## 📄 License
 
-Distribué sous licence MIT — libre à toi d'ajuster selon tes besoins.
+Distributed under the MIT License — feel free to adjust it to your needs.
