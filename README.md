@@ -10,7 +10,8 @@
 - [Démonstration](#-démonstration)
 - [Architecture du projet](#-architecture-du-projet)
 - [Comment ça marche](#-comment-ça-marche)
-- [Stack technique](#-stack-technique)
+- [Tools & Technologies](#-tools--technologies)
+- [Key Concepts Covered](#-key-concepts-covered)
 - [Installation](#-installation)
 - [Configuration](#-configuration)
 - [Lancement](#-lancement)
@@ -19,6 +20,7 @@
 - [Limites connues](#-limites-connues)
 - [Pistes d'amélioration](#-pistes-damélioration)
 - [Avertissement](#-avertissement)
+- [Author](#-author)
 - [Licence](#-licence)
 
 ---
@@ -98,7 +100,6 @@ security_agent/
 │   .gitignore
 │   requirements.txt
 │   test_api.py           # Script de diagnostic : liste les modèles Gemini disponibles pour la clé API
-│   Attaque.txt           # Exemple de payload d'attaque (SQLi + XSS) utilisé pour les tests
 │
 ├───app/
 │   │   main.py           # Point d'entrée Flask : middleware de sécurité, routes, dashboard
@@ -176,17 +177,39 @@ Une interface temps réel (rafraîchie périodiquement) affiche :
 
 ---
 
-## 🛠️ Stack technique
+## 🛠️ Tools & Technologies
 
-| Composant | Technologie |
-|---|---|
-| Backend web | [Flask](https://flask.palletsprojects.com/) |
-| Détection d'anomalies | [scikit-learn](https://scikit-learn.org/) — `IsolationForest` |
-| IA générative / verdict | [Google Gemini](https://ai.google.dev/) via `google-genai` |
-| Frontend | HTML / CSS / JavaScript (vanilla) |
-| Visualisation | Plotly (graphique des flux côté dashboard) |
-| Email | `smtplib` (SMTP SSL Gmail) |
-| Configuration | `python-dotenv` |
+| Catégorie | Outil / Technologie | Rôle dans le projet |
+|---|---|---|
+| Langage | **Python 3** | Langage principal du backend |
+| Framework web | **Flask** | Serveur applicatif, routes, middleware de sécurité |
+| Machine Learning | **scikit-learn** (`IsolationForest`) | Détection d'anomalies sur les requêtes entrantes |
+| Calcul numérique | **NumPy / Pandas** | Manipulation des features et des données de logs |
+| IA générative | **Google Gemini** (`google-genai`) | Verdict BLOCK/ALLOW motivé + chatbot d'analyse des logs |
+| Visualisation | **Plotly** | Graphique temps réel des flux dans le dashboard |
+| Frontend | **HTML / CSS / JavaScript** (vanilla) | Interface bancaire (SecureBank) et dashboard SOC |
+| Email | **smtplib** (SMTP SSL) | Envoi automatique des alertes d'intrusion via Gmail |
+| Configuration | **python-dotenv** | Chargement sécurisé des variables d'environnement (`.env`) |
+| Tests / Diagnostic | `test_api.py` | Vérification de la clé API et des modèles Gemini disponibles |
+| Environnement d'attaque | **Kali Linux** (VirtualBox) | Machine utilisée pour simuler les requêtes malveillantes (`curl`) |
+| Versioning | **Git / GitHub** | Gestion de version et hébergement du dépôt |
+
+---
+
+## 📌 Key Concepts Covered
+
+Ce projet met en pratique plusieurs concepts clés à l'intersection de la **cybersécurité**, du **Machine Learning** et de l'**IA générative** :
+
+- **Sécurité applicative web** — middleware d'interception, gestion des requêtes entrantes, bannissement d'IP, réponses HTTP 403.
+- **Détection d'intrusion (IDS)** — identification de motifs d'attaque courants : injection SQL, Cross-Site Scripting (XSS).
+- **Détection d'anomalies par Machine Learning** — utilisation d'un modèle non supervisé (`IsolationForest`) pour repérer des comportements déviants sans étiquetage préalable.
+- **IA générative comme moteur de décision (LLM-as-a-judge)** — un modèle de langage rend un verdict de sécurité motivé à partir d'une donnée brute, illustrant un pattern *"LLM-as-a-judge"*.
+- **Stratégie de repli (fallback)** — bascule automatique vers une détection par patterns lorsque l'API IA est indisponible, pour garantir la continuité de la protection.
+- **Journalisation et observabilité** — structuration des logs pour permettre l'analyse a posteriori et l'alimentation d'un dashboard temps réel.
+- **Automatisation des alertes** — notification email déclenchée automatiquement par un événement de sécurité.
+- **Visualisation de données de sécurité** — représentation graphique du niveau de menace dans le temps.
+- **Gestion sécurisée des secrets** — séparation configuration / code via variables d'environnement (`.env`), exclusion via `.gitignore`.
+- **Simulation d'attaque en environnement contrôlé** — usage d'une machine virtuelle Kali Linux pour reproduire un scénario d'intrusion réaliste sans risque.
 
 ---
 
@@ -296,6 +319,16 @@ Ce projet est un **prototype de démonstration / pédagogique**, réalisé dans 
 - Le serveur de développement Flask (`debug=True`) ne doit jamais être exposé publiquement.
 - La détection par IA ne remplace pas un WAF (Web Application Firewall) ou un SOC professionnel.
 - Toute clé API ou identifiant ayant pu être exposé pendant les phases de test doit être révoqué avant toute mise en ligne du dépôt.
+
+---
+
+## 👤 Author
+
+**Yasser**
+
+- GitHub : [@Yasser-02G](https://github.com/Yasser-02G)
+
+N'hésite pas à ouvrir une *issue* ou une *pull request* si tu as des suggestions d'amélioration sur ce projet.
 
 ---
 
