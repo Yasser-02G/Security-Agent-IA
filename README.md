@@ -96,8 +96,7 @@ Chaque blocage déclenche l'envoi automatique d'un email d'alerte SOC contenant 
 
 ```
 security_agent/
-│   .env.example          # Modèle de configuration (à copier en .env)
-│   .gitignore
+│   .env
 │   requirements.txt
 │   test_api.py           # Script de diagnostic : liste les modèles Gemini disponibles pour la clé API
 │
