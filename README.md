@@ -241,8 +241,6 @@ cp .env.example .env
 | `GMAIL_APP_PASSWORD` | [Mot de passe d'application](https://support.google.com/accounts/answer/185833) Gmail (16 caractères, **pas** ton mot de passe principal) |
 | `RECIPIENT_EMAIL` | Adresse email destinataire des alertes de sécurité |
 
-⚠️ **Le fichier `.env` réel ne doit jamais être commité** — il est déjà exclu via `.gitignore`.
-
 Pour vérifier que ta clé Gemini est valide et lister les modèles disponibles :
 
 ```bash
