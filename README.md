@@ -70,13 +70,13 @@ curl -X POST http://192.168.56.1:5000/chat \
 
 Le middleware intercepte la requête, le modèle ML détecte l'anomalie, l'agent Gemini confirme le verdict `BLOCK`, et l'IP est immédiatement bannie. Toute requête suivante de cette IP reçoit une page d'erreur 403, y compris pour les ressources statiques (ici une erreur de template attendue en environnement de démo).
 
-![Page d'erreur après blocage](Screenshots/Capture%20d%E2%80%99%C3%A9cran%20%28106%29.png)
+![Page d'erreur après blocage](Screenshots/Capture%20d%E2%80%99%C3%A9cran%20%28105%29.png)
 
 **5. Dashboard — visualisation de l'attaque en temps réel**
 
 Le dashboard administrateur affiche le graphique des flux : le trafic normal apparaît en vert, le pic critique de l'attaque détectée apparaît en rouge. L'IP `192.168.56.102` est listée dans les IPs bloquées, et un rapport a été automatiquement envoyé par email.
 
-![Dashboard temps réel](Screenshots/Capture%20d%E2%80%99%C3%A9cran%20%28105%29.png)
+![Dashboard temps réel](Screenshots/Capture%20d%E2%80%99%C3%A9cran%20%28106%29.png)
 
 **6. Chatbot d'analyse des logs**
 
