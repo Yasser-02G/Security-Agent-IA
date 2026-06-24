@@ -1,4 +1,4 @@
-# 🛡️ AI Security Agent — Real-Time Intrusion Detection for a Banking Application
+# 🛡️ AI Security Agent — Real-Time Intrusion Detection for a Banking Platform (**SecureBank**)
 
 > An autonomous cybersecurity agent that combines **Machine Learning** (Isolation Forest) with an **LLM (Google Gemini)** to analyze, judge, and block malicious requests to a web application in real time — demonstrated here on a simulated online banking platform (**SecureBank**).
 
