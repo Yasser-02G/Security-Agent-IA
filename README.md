@@ -321,9 +321,9 @@ This project is an **educational demo prototype**, built as a learning exercise 
 
 ## 👤 Author
 
-**Yasser** — Network & Security Engineer
+**Yasser** — Network & Security Engineer  
 
-- GitHub: [@Yasser-02G](https://github.com/Yasser-02G)
+🔗 GitHub: [@Yasser-02G](https://github.com/Yasser-02G)
 
 Feel free to open an _issue_ or a _pull request_ if you have suggestions to improve this project.
 
