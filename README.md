@@ -44,7 +44,7 @@ The simulated scenario is that of an online bank (**SecureBank**) exposing a wir
 
 Before diving into the scenario details, here is a global view of the pipeline: from log collection to automated actions (blocking, alerting, dashboard), through the AI analysis engine and the storage/observability layer.
 
-![Project Architecture](Screenshots/architecture.png)
+![Project Architecture](Screenshots/Architecture.png)
 
 ### Full scenario: from attack to automatic blocking
 
