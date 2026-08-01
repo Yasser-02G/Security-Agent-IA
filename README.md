@@ -330,11 +330,11 @@ This project is a **demo / educational prototype**, built as part of a learning 
 
 ## 👤 Author
 
-**Yasser**
+**Yasser** — Network & Security Engineer  
 
-- GitHub: [@Yasser-02G](https://github.com/Yasser-02G)
+🔗 GitHub: [@Yasser-02G](https://github.com/Yasser-02G)
 
-Feel free to open an *issue* or a *pull request* if you have suggestions for improving this project.
+Feel free to open an _issue_ or a _pull request_ if you have suggestions to improve this project.
 
 ---
 
